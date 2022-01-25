@@ -1,2 +1,5 @@
+from j2py import dummy
+
+
 def test_dummy():
-    pass
+    assert dummy() == 2137
