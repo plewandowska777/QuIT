@@ -20,7 +20,11 @@ jobs:
           pip install .[test]
       - name: Run unit tests
         run: pytest --cov=j2py --cov-report=xml
-
+      - name: Report coverage
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          fail_ci_if_error: true
   run_quality_cheks:
     runs-on: ubuntu-latest
     steps:
