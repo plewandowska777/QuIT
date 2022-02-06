@@ -1,4 +1,4 @@
-from j2py import dummy
+from quit import dummy
 
 
 def test_dummy():
