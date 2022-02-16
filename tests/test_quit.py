@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from scipy.linalg import hadamard
+from scipy import linalg
 
 from quit.basicfunction import (
     basis,
@@ -55,7 +55,7 @@ sx = np.array([[0, 1], [1, 0]])
 
 
 @pytest.mark.parametrize(
-    "symmatrix", [np.identity(3), np.asarray(hadamard(2, dtype=complex)), np.kron(sx, sx)]
+    "symmatrix", [np.identity(3), np.asarray(linalg.hadamard(2, dtype=complex)), np.kron(sx, sx)]
 )
 def test_dagger_for_hermitian_matrices(symmatrix):
     np.testing.assert_array_equal(dagger(symmatrix), symmatrix)
@@ -100,7 +100,7 @@ sx = np.array([[0, 1], [1, 0]])
 
 
 @pytest.mark.parametrize(
-    "symmatrix", [np.identity(3), np.asarray(hadamard(2, dtype=complex)), np.kron(sx, sx)]
+    "symmatrix", [np.identity(3), np.asarray(linalg.hadamard(2, dtype=complex)), np.kron(sx, sx)]
 )
 def test_if_vec_and_res_is_equal_on_symmetric_matrix(symmatrix):
     np.testing.assert_array_equal(vec(symmatrix), res(symmatrix))

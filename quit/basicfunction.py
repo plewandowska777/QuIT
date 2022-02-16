@@ -1,3 +1,4 @@
+import typing
 from collections.abc import Iterable
 
 import numpy as np
@@ -81,7 +82,7 @@ def res(matrix: np.ndarray) -> np.ndarray:
     return ket(np.reshape(np.asarray(matrix), np.size(matrix)))
 
 
-def unres(psi: Iterable[complex], dims: tuple[int, int]) -> np.ndarray:
+def unres(psi: Iterable[complex], dims: typing.Tuple[int, int]) -> np.ndarray:
     """Un-reshaping of the vector into the matrix of dimension dims.
 
     :param psi: A matrix given by numpy array.
@@ -100,7 +101,7 @@ def vec(matrix: np.ndarray) -> np.ndarray:
     return ket(np.reshape(np.asarray(matrix).T, np.size(matrix)))
 
 
-def unvec(psi: Iterable[complex], dims: tuple[int, int]) -> np.ndarray:
+def unvec(psi: Iterable[complex], dims: typing.Tuple[int, int]) -> np.ndarray:
     """Re-vectorization of the vector into the matrix of dimension dims.
 
     :param psi: A matrix given by numpy array.
@@ -118,29 +119,3 @@ def bell_state(qubits: int = 2) -> np.ndarray:
     :return: The maximally entangled state on dimension 2 ** qubits.
     """
     return proj(vec(np.identity(qubits)))
-
-
-a = np.array([[1, 1], [2, 2]])
-b = np.identity(2)
-c = np.array([[-1, 1], [0, 2]])
-# print(np.kron(a,b) @ res(c))
-# print( res(a @ c @ np.transpose(b)))
-
-# print(bell_state(2))
-# print(ketbra(vec(np.identity(2)/np.sqrt(2)), vec(np.identity(2)/np.sqrt(2))))
-
-# pauli_matrices = np.array(([[0, 1], [1, 0]], [[0, -1j], [1j, 0]], [[1, 0], [0, -1]]))
-
-
-# phi = np.pi
-# print(np.array([1.0, phi]))
-
-# print( [proj(np.identity(4)[i]) for i in range(4)])
-
-# print(basis(4))
-
-v = np.array([np.sqrt(2), 1j + 2])
-x = np.array([np.pi, 1, -2j])
-print(np.conjugate(x))
-print(np.outer(v, np.conjugate(x)))
-print(ketbra(v, x))
