@@ -61,7 +61,7 @@ def proj(psi: Iterable[complex]) -> np.ndarray:
     :param psi: Sequence of complex numbers.
     :return: A matrix |psi><psi|.
     """
-    return ket(psi / linalg.norm(psi)) @ bra(psi / linalg.norm(psi))
+    return ket(psi) / linalg.norm(psi) @ bra(psi) / linalg.norm(psi)
 
 
 def dagger(matrix: np.ndarray) -> np.ndarray:
