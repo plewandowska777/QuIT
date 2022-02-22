@@ -82,7 +82,7 @@ def normaliced_vector(psi: Array1D) -> np.ndarray:
 
 
 def proj(psi: Array1D) -> np.ndarray:
-    """Create a projector ontto normalized vector |psi>.
+    """Create a projector onto normalized vector |psi>.
 
     :param psi: Sequence of complex numbers.
     :return: A matrix |psi><psi|.
