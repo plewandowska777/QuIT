@@ -27,7 +27,7 @@ def basis(dim: int, index: int) -> np.ndarray:
     :return: A basis vector |d, i>.
     """
     if index >= dim:
-        raise Exception("Parameter index out of range.")
+        raise ValueError("Parameter index out of range.")
 
     vec = np.zeros(dim)
     vec[index] = 1
@@ -63,7 +63,7 @@ def braket(psi: Array1D, phi: Array1D) -> complex:
 
 
 def ketbra(psi: Array1D, phi: Array1D) -> np.ndarray:
-    """Create a matrix from multiplication vectors psi and phi.
+    """Compute outer product |psi><phi|.
 
     :param psi: Sequence of complex numbers.
     :param phi: Sequence of complex numbers.
@@ -72,13 +72,22 @@ def ketbra(psi: Array1D, phi: Array1D) -> np.ndarray:
     return ket(psi) @ bra(phi)
 
 
+def normaliced_vector(psi: Array1D) -> np.ndarray:
+    """Create a normalized vector |psi>.
+
+    :param psi: Sequence of complex numbers.
+    :return: A normaliced vector |psi> / |||psi>||.
+    """
+    return ket(psi / linalg.norm(psi))
+
+
 def proj(psi: Array1D) -> np.ndarray:
     """Create a projector ontto normalized vector |psi>.
 
     :param psi: Sequence of complex numbers.
     :return: A matrix |psi><psi|.
     """
-    return ket(psi / linalg.norm(psi)) @ bra(psi / linalg.norm(psi))
+    return ket(normaliced_vector(psi)) @ bra(normaliced_vector(psi))
 
 
 def res(matrix: np.ndarray) -> np.ndarray:
@@ -121,18 +130,18 @@ def unvec(psi: Array1D, dims: typing.Tuple[int, int]) -> np.ndarray:
 
 
 def bell_state(qubits: int = 2) -> np.ndarray:
-    """Create the maximally entangled state on dimension 2 ** qubits.
+    """Create the maximally entangled state of dimension 2 ** qubits.
 
     :param qubits: Number of qubits.
-    :return: The maximally entangled state on dimension 2 ** qubits.
+    :return: The maximally entangled state of dimension 2 ** qubits.
     """
     return vec(np.identity(qubits)) / linalg.norm(vec(np.identity(qubits)))
 
 
 def bell_state_density(qubits: int = 2) -> np.ndarray:
-    """Create the maximally entangled state on dimension 2 ** qubits as density operator.
+    """Create the maximally entangled state of dimension 2 ** qubits as density operator.
 
     :param qubits: Number of qubits.
-    :return: The maximally entangled state on dimension 2 ** qubits as density operator.
+    :return: The maximally entangled state of dimension 2 ** qubits as density operator.
     """
     return proj(vec(np.identity(qubits)))

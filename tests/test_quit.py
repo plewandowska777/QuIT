@@ -48,7 +48,7 @@ def test_braket(phi, psi):
 
 
 @pytest.mark.parametrize("vector", [[1, 2], [1, -1]])
-def test_projector_is_equal_proj_to_the_power_of_2(vector):
+def test_projector_is_idemotent(vector):
     np.testing.assert_almost_equal(proj(vector) @ proj(vector), proj(vector))
 
 
@@ -58,14 +58,12 @@ sx = np.array([[0, 1], [1, 0]])
 @pytest.mark.parametrize(
     "symmatrix", [np.identity(3), np.asarray(linalg.hadamard(2, dtype=complex)), np.kron(sx, sx)]
 )
-def test_dagger_for_hermitian_matrices(symmatrix):
+def test_dagger_for_hermitian_matrices_is_equal_its_dagger_operation(symmatrix):
     np.testing.assert_array_equal(dagger(symmatrix), symmatrix)
 
 
-matrix = np.array([[1, 1 - 1j], [0, 1], [np.pi, -1]])
-
-
 def test_function_res_naive():
+    matrix = np.array([[1, 1 - 1j], [0, 1], [np.pi, -1]])
     np.testing.assert_array_equal(res(matrix), ket(np.asarray([1, 1 - 1j, 0, 1, np.pi, -1])))
 
 
@@ -90,10 +88,12 @@ def test_function_res_for_vector():
 
 
 def test_function_vec_naive():
+    matrix = np.array([[1, 1 - 1j], [0, 1], [np.pi, -1]])
     np.testing.assert_array_equal(vec(matrix), ket(np.asarray([1, 0, np.pi, 1 - 1j, 1, -1])))
 
 
 def test_function_vec_as_transposition_of_res():
+    matrix = np.array([[1, 1 - 1j], [0, 1], [np.pi, -1]])
     np.testing.assert_array_equal(vec(matrix), res(np.transpose(matrix)))
 
 
@@ -107,19 +107,24 @@ def test_if_vec_and_res_is_equal_on_symmetric_matrix(symmatrix):
     np.testing.assert_array_equal(vec(symmatrix), res(symmatrix))
 
 
-vector = np.array([[1, 1 - 1j, 0, 1, np.pi, -1]])
-matrix = np.array([[1, 1 - 1j], [0, 1], [np.pi, -1]])
-
-
 def test_unres():
+
+    vector = np.array([[1, 1 - 1j, 0, 1, np.pi, -1]])
+    matrix = np.array([[1, 1 - 1j], [0, 1], [np.pi, -1]])
+
     np.testing.assert_array_equal(unres(vector, (3, 2)), matrix)
 
 
 def test_unvec():
+
+    vector = np.array([[1, 1 - 1j, 0, 1, np.pi, -1]])
+    matrix = np.array([[1, 1 - 1j], [0, 1], [np.pi, -1]])
+
     np.testing.assert_array_equal(unvec(vector, (3, 2)), matrix.transpose())
 
 
 def test_bell_state():
+
     np.testing.assert_array_almost_equal(bell_state(2), 1 / np.sqrt(2) * ket([1, 0, 0, 1]))
 
 
