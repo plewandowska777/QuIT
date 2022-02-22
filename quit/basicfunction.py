@@ -1,67 +1,37 @@
 import typing
-from collections.abc import Iterable
 
 import numpy as np
 from scipy import linalg
 
+Array1D = typing.Union[np.ndarray, typing.Sequence[complex]]
 
-def ket(psi: Iterable[complex]) -> np.ndarray:
+
+def ket(psi: Array1D) -> np.ndarray:
     """Create a ket |psi> as a vertical vector.
 
-    :param ket: Sequence of complex numbers.
+    :param psi: Sequence of complex numbers.
     :return: A vertical vector as numpy array.
     """
-    return np.reshape(np.asarray(psi), (-1, 1))
+    psi = np.asarray(psi)
+
+    if len(psi.squeeze().shape) != 1:
+        raise ValueError("Wrong parameter psi.")
+    return psi.reshape((-1, 1))
 
 
-def basis(dim: int) -> Iterable[np.ndarray]:
+def basis(dim: int, index: int) -> np.ndarray:
     """Create computational basis of dimension dim.
 
     :param dim: Dimension of vector space.
-    :return: Set of {|i>}i where i={0,...,d-1}.
+    :param index:
+    :return: A basis vector |d, i>.
     """
-    vec = [np.zeros(dim) for _ in range(dim)]
-    for i in range(dim):
-        vec[i][i] = 1
+    if index >= dim:
+        raise Exception("Parameter index out of range.")
+
+    vec = np.zeros(dim)
+    vec[index] = 1
     return vec
-
-
-def bra(psi: Iterable[complex]) -> np.ndarray:
-    """Create bra <psi| as a horizontal vector.
-
-    :param psi: Sequence of complex numbers.
-    :return: A horizontal vector as numpy array satisfying <psi| = |psi>^+
-    """
-    return np.transpose(np.conjugate(ket(psi)))
-
-
-def braket(psi: Iterable[complex], phi: Iterable[complex]) -> complex:
-    """Create braket as an inner product between vectors psi and phi.
-
-    :param psi: Sequence of complex numbers.
-    :param phi: Sequence of complex numbers.
-    :return: Inner product between vectors psi and phi.
-    """
-    return complex(bra(psi) @ ket(phi))
-
-
-def ketbra(psi: Iterable[complex], phi: Iterable[complex]) -> np.ndarray:
-    """Create a matrix from multiplication vectors psi and phi.
-
-    :param psi: Sequence of complex numbers.
-    :param phi: Sequence of complex numbers.
-    :return: A matrix |psi><phi|
-    """
-    return ket(psi) @ bra(phi)
-
-
-def proj(psi: Iterable[complex]) -> np.ndarray:
-    """Create a projector from an unit vector |psi>.
-
-    :param psi: Sequence of complex numbers.
-    :return: A matrix |psi><psi|.
-    """
-    return ket(psi) / linalg.norm(psi) @ bra(psi) / linalg.norm(psi)
 
 
 def dagger(matrix: np.ndarray) -> np.ndarray:
@@ -73,6 +43,44 @@ def dagger(matrix: np.ndarray) -> np.ndarray:
     return np.transpose(np.conjugate(matrix))
 
 
+def bra(psi: Array1D) -> np.ndarray:
+    """Create bra <psi| as a horizontal vector.
+
+    :param psi: Sequence of complex numbers.
+    :return: A horizontal vector as numpy array satisfying <psi| = |psi>^+
+    """
+    return dagger(ket(psi))
+
+
+def braket(psi: Array1D, phi: Array1D) -> complex:
+    """Create braket as an inner product between vectors psi and phi.
+
+    :param psi: Sequence of complex numbers.
+    :param phi: Sequence of complex numbers.
+    :return: Inner product between vectors psi and phi.
+    """
+    return complex(bra(psi) @ ket(phi))
+
+
+def ketbra(psi: Array1D, phi: Array1D) -> np.ndarray:
+    """Create a matrix from multiplication vectors psi and phi.
+
+    :param psi: Sequence of complex numbers.
+    :param phi: Sequence of complex numbers.
+    :return: A matrix |psi><phi|
+    """
+    return ket(psi) @ bra(phi)
+
+
+def proj(psi: Array1D) -> np.ndarray:
+    """Create a projector ontto normalized vector |psi>.
+
+    :param psi: Sequence of complex numbers.
+    :return: A matrix |psi><psi|.
+    """
+    return ket(psi) / linalg.norm(psi) @ bra(psi) / linalg.norm(psi)
+
+
 def res(matrix: np.ndarray) -> np.ndarray:
     """Reshaping maps matrix into a vector row by row. res(A) is equivalent to vec(A.T).
 
@@ -82,14 +90,14 @@ def res(matrix: np.ndarray) -> np.ndarray:
     return ket(np.reshape(np.asarray(matrix), np.size(matrix)))
 
 
-def unres(psi: Iterable[complex], dims: typing.Tuple[int, int]) -> np.ndarray:
+def unres(psi: Array1D, dims: typing.Tuple[int, int]) -> np.ndarray:
     """Un-reshaping of the vector into the matrix of dimension dims.
 
     :param psi: A matrix given by numpy array.
     :param dims: A tuple of dimensions.
     :return: A vertical vector creating by matrix vectorization
     """
-    return np.asarray(np.reshape(np.asarray(psi), dims))
+    return np.reshape(np.asarray(psi), dims)
 
 
 def vec(matrix: np.ndarray) -> np.ndarray:
@@ -101,7 +109,7 @@ def vec(matrix: np.ndarray) -> np.ndarray:
     return ket(np.reshape(np.asarray(matrix).T, np.size(matrix)))
 
 
-def unvec(psi: Iterable[complex], dims: typing.Tuple[int, int]) -> np.ndarray:
+def unvec(psi: Array1D, dims: typing.Tuple[int, int]) -> np.ndarray:
     """Re-vectorization of the vector into the matrix of dimension dims.
 
     :param psi: A matrix given by numpy array.
@@ -117,5 +125,14 @@ def bell_state(qubits: int = 2) -> np.ndarray:
 
     :param qubits: Number of qubits.
     :return: The maximally entangled state on dimension 2 ** qubits.
+    """
+    return vec(np.identity(qubits)) / linalg.norm(vec(np.identity(qubits)))
+
+
+def bell_state_density(qubits: int = 2) -> np.ndarray:
+    """Create the maximally entangled state on dimension 2 ** qubits as density operator.
+
+    :param qubits: Number of qubits.
+    :return: The maximally entangled state on dimension 2 ** qubits as density operator.
     """
     return proj(vec(np.identity(qubits)))
