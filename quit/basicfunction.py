@@ -91,9 +91,10 @@ def proj(psi: Array1D) -> np.ndarray:
 
 
 def res(matrix: np.ndarray) -> np.ndarray:
-    """Reshaping maps matrix into a vector row by row. res(A) is equivalent to vec(A.T).
+    """Create reshaping maps matrix into a vector row by row.
+    See res(A) as equivalence to vec(A.T).
 
-    :param matrix: A matrix given by numpy array.
+    :param matrix: A matrix to be reshaped.
     :return: A vertical vector creating by matrix reshaping.
     """
     return ket(np.reshape(np.asarray(matrix), np.size(matrix)))
@@ -104,15 +105,15 @@ def unres(psi: Array1D, dims: typing.Tuple[int, int]) -> np.ndarray:
 
     :param psi: A matrix given by numpy array.
     :param dims: A tuple of dimensions.
-    :return: A vertical vector creating by matrix vectorization
+    :return: A vertical vector creating by matrix vectorization.
     """
     return np.reshape(np.asarray(psi), dims)
 
 
 def vec(matrix: np.ndarray) -> np.ndarray:
-    """Reshaping maps matrix into a vector column by column. vec(A) is equivalent to res(A.T).
+    """Create reshaping maps matrix into a vector column by column. vec(A) is equivalent to res(A.T).
 
-    :param matrix: A matrix given by numpy array.
+    :param matrix: A matrix to be vectorized.
     :return: A matrix of dimension dims.
     """
     return ket(np.reshape(np.asarray(matrix).T, np.size(matrix)))
@@ -122,7 +123,7 @@ def unvec(psi: Array1D, dims: typing.Tuple[int, int]) -> np.ndarray:
     """Re-vectorization of the vector into the matrix of dimension dims.
 
     :param psi: A matrix given by numpy array.
-    :param dims: A tuple of dimensions
+    :param dims: A tuple of dimensions.
     :return: A matrix of dimension dims.
     """
 
