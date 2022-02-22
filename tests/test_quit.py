@@ -5,6 +5,7 @@ from scipy import linalg
 from quit.basicfunction import (
     basis,
     bell_state,
+    bell_state_density,
     bra,
     braket,
     dagger,
@@ -23,10 +24,10 @@ def test_ket_with_different_types_of_entries(phi):
     np.testing.assert_array_equal(np.array([[1.0], [phi]]), ket([1, phi]))
 
 
-@pytest.mark.parametrize("dim", [2, 4])
-def test_if_basis_is_correctly_defined(dim):
-    comp_basis = [np.identity(dim)[i] for i in range(dim)]
-    np.testing.assert_array_equal(basis(dim), comp_basis)
+@pytest.mark.parametrize("dim", [4, 8])
+@pytest.mark.parametrize("index", [2, 3])
+def test_if_basis_is_correctly_defined(dim, index):
+    np.testing.assert_array_equal(basis(dim, index), np.identity(dim)[index])
 
 
 @pytest.mark.parametrize("phi", [np.pi, np.sqrt(2), 2j, 1 + 1j, 1])
@@ -40,10 +41,10 @@ def test_ketbra_is_equal_outer_product(phi, psi):
     np.testing.assert_almost_equal(ketbra(phi, psi), np.outer(phi, np.conjugate(psi)))
 
 
-@pytest.mark.parametrize("phi", [np.sqrt(2), 1j + 2])
-@pytest.mark.parametrize("psi", [np.pi, 1, 2j])
+@pytest.mark.parametrize("phi", [[np.sqrt(2), 1j + 2]])
+@pytest.mark.parametrize("psi", [[np.pi, 2j]])
 def test_braket(phi, psi):
-    assert braket(phi, psi) - np.inner(np.conjugate(phi), psi) == 0
+    np.testing.assert_almost_equal(braket(phi, psi), np.inner(np.conjugate(phi), psi))
 
 
 @pytest.mark.parametrize("vector", [[1, 2], [1, -1]])
@@ -118,9 +119,13 @@ def test_unvec():
     np.testing.assert_array_equal(unvec(vector, (3, 2)), matrix.transpose())
 
 
+def test_bell_state():
+    np.testing.assert_array_almost_equal(bell_state(2), 1 / np.sqrt(2) * ket([1, 0, 0, 1]))
+
+
 @pytest.mark.parametrize("dim", [2, 3, 4])
-def test_bell_state(dim):
-    np.testing.assert_array_equal(
-        bell_state(dim),
+def test_bell_state_density(dim):
+    np.testing.assert_array_almost_equal(
+        bell_state_density(dim),
         ketbra(vec(np.identity(dim) / np.sqrt(dim)), vec(np.identity(dim) / np.sqrt(dim))),
     )
